@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "sta-cs5041"
+  },
+  "targets": {
+    "sta-cs5041": {
+      "database": {
+        "sta-cs5041-p4": [
+          "sta-cs5041-p4"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
