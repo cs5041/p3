@@ -31,6 +31,7 @@ const firebasetoken = readFileSync('firebasetoken', { encoding: 'utf8' }).trim()
         const startTime = Date.now();
 
         let outsideTemp = 0;
+        let insideTemp = 0;
 
         const scale = (fromRange, toRange) => {
             const d = (toRange[1] - toRange[0]) / (fromRange[1] - fromRange[0]);
@@ -43,19 +44,22 @@ const firebasetoken = readFileSync('firebasetoken', { encoding: 'utf8' }).trim()
             outsideTemp = data.integer;
         });
 
+        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(2), limitToLast(1)), (snapshot) => {
+            const data = snapshot.val();
+            console.log(data);
+            insideTemp = data.integer;
+        });
+
         onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(4), limitToLast(1)), (snapshot) => {
             const data = snapshot.val();
             if (data.timestamp > startTime) {
                 console.log(data);
-                const scaleTemp = scale([0, 20], [0, 1])
-                const scaledTemp = scaleTemp(Math.max(0, Math.min(20, outsideTemp)));
-                console.log(scaledTemp);
                 push(ref(database, "data"), {
                     userId: user.uid,
                     groupId: 21,
                     timestamp: serverTimestamp(),
                     type: "int",
-                    integer: scaledTemp * 360
+                    integer: Math.random() * 360
                 });
             }
         });
@@ -111,7 +115,17 @@ const firebasetoken = readFileSync('firebasetoken', { encoding: 'utf8' }).trim()
                     groupId: 20,
                     timestamp: serverTimestamp(),
                     type: "str",
-                    string: "You picked the grey rabbit!"
+                    string: `You picked the grey rabbit! And the outside temperature is ${outsideTemp}C`
+                });
+                const scaleTemp = scale([0, 20], [0, 1])
+                const scaledTemp = scaleTemp(Math.max(0, Math.min(20, outsideTemp)));
+                console.log(scaledTemp);
+                push(ref(database, "data"), {
+                    userId: user.uid,
+                    groupId: 21,
+                    timestamp: serverTimestamp(),
+                    type: "int",
+                    integer: scaledTemp * 360
                 });
             }
         });
@@ -125,7 +139,17 @@ const firebasetoken = readFileSync('firebasetoken', { encoding: 'utf8' }).trim()
                     groupId: 20,
                     timestamp: serverTimestamp(),
                     type: "str",
-                    string: "You picked the white rabbit!"
+                    string: `You picked the white rabbit! And the inside temperature is ${insideTemp}C`
+                });
+                const scaleTemp = scale([0, 20], [0, 1])
+                const scaledTemp = scaleTemp(Math.max(0, Math.min(20, insideTemp)));
+                console.log(scaledTemp);
+                push(ref(database, "data"), {
+                    userId: user.uid,
+                    groupId: 21,
+                    timestamp: serverTimestamp(),
+                    type: "int",
+                    integer: scaledTemp * 360
                 });
             }
         });
