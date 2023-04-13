@@ -169,7 +169,7 @@ const writeText = (text) => {
         lights.reverse().forEach((el, i) => updateLight(i + 1, el));
         lightsUpdate = false;
       }
-    }, 5000);
+    }, 1000);
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(21), limitToLast(5)), (snapshot1) => {
       hues = Object.values(snapshot1.val() ?? {}).map(el => parseInt(el?.integer ?? 0));
