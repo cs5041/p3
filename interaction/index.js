@@ -52,7 +52,7 @@ const firebasetoken = readFileSync('firebasetoken', { encoding: 'utf8' }).trim()
 
         onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(4), limitToLast(1)), (snapshot) => {
             const data = snapshot.val();
-            if (data.timestamp > startTime) {
+            if (data.timestamp > startTime && data.integer === 1) {
                 console.log(data);
                 push(ref(database, "data"), {
                     userId: user.uid,
@@ -108,7 +108,7 @@ const firebasetoken = readFileSync('firebasetoken', { encoding: 'utf8' }).trim()
 
         onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(8), limitToLast(1)), (snapshot) => {
             const data = snapshot.val();
-            if (data.timestamp > startTime) {
+            if (data.timestamp > startTime && data.integer === 1) {
                 console.log(data);
                 push(ref(database, "data"), {
                     userId: user.uid,
@@ -132,7 +132,7 @@ const firebasetoken = readFileSync('firebasetoken', { encoding: 'utf8' }).trim()
 
         onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(9), limitToLast(1)), (snapshot) => {
             const data = snapshot.val();
-            if (data.timestamp > startTime) {
+            if (data.timestamp > startTime && data.integer === 1) {
                 console.log(data);
                 push(ref(database, "data"), {
                     userId: user.uid,
