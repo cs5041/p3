@@ -7,6 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 
 import textwrap
+import re
 
 # Define the Reset Pin
 oled_reset = digitalio.DigitalInOut(board.D24)
@@ -71,10 +72,11 @@ def on_connect(client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    print(msg.topic + " " +str(msg.payload))
     data = json.loads(msg.payload)
+    print(msg.topic + " " + str(data))
     for i, text in enumerate(data):
         if i <= 3:
+            text = re.sub(u'[^\\x00-\\x7F\\x80-\\xFF\\u0100-\\u017F\\u0180-\\u024F\\u1E00-\\u1EFF]', u'', text)
             drawText(text, oleds[i])
 
 mqttpass = ""
