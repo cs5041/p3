@@ -3,6 +3,8 @@ const { initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
 const { getDatabase } = require('firebase-admin/database');
 
+const { pbkdf2Sync } = require('node:crypto');
+
 const admin = initializeApp({
     databaseURL: "https://sta-cs5041-p4.firebaseio.com"
 });
@@ -14,7 +16,8 @@ exports.getToken = functions.https.onCall(async (data, context) => {
         const authToken = await database.ref(`auth`).child(token).once('value');
         if (authToken.exists()) {
             const userObject = authToken.val();
-            const customToken = await getAuth(admin).createCustomToken(token, userObject);
+            const key = pbkdf2Sync(token, userObject.salt, 100000, 32, 'sha512');
+            const customToken = await getAuth(admin).createCustomToken(key.toString('hex'), userObject?.iot === 1 ? { iot: 1 } : {});
             return {
                 result: 'ok',
                 token: customToken
