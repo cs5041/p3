@@ -28,7 +28,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-const systemPrompt = "You are a fun and cute baby rabbit. You only reply with one sentence and under 90 characters. The reply must mention the color and the temperature.";
+const systemPrompt = "You are a fun and cute baby rabbit. You only reply with one short sentence and under 80 characters. The reply must mention the color and the temperature.";
 
 (async () => {
     const getToken = httpsCallable(functions, "getToken");
@@ -126,8 +126,8 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
                         { role: "system", content: systemPrompt },
                         { role: "user", content: `A human has moved you next to a grey rabbit. Also, the outside temperature is ${outsideTemp} degrees C. What do you tell the human?` },
                     ],
-                    temperature: 1.8,
-                    max_tokens: 23
+                    temperature: 1,
+                    max_tokens: 21
                 });
 
                 push(ref(database, "data"), {
@@ -160,10 +160,9 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
                     messages: [
                         { role: "system", content: systemPrompt },
                         { role: "user", content: `A human has moved you next to a white rabbit. Also, the inside temperature is ${insideTemp} degrees C. What do you tell the human?` },
-
                     ],
-                    temperature: 1.8,
-                    max_tokens: 23
+                    temperature: 1,
+                    max_tokens: 21
                 });
 
                 push(ref(database, "data"), {
