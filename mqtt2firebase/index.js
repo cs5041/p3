@@ -114,7 +114,7 @@ const hslToRgb = (hsl) => {
   const hslData = [
     Math.max(0, Math.min(hsl?.[0] ?? 0, 360)),
     Math.max(0, Math.min(hsl?.[1] ?? 0, 100)),
-    Math.max(0, Math.min(hsl?.[2] ?? 0, 100))
+    Math.max(0, Math.min(hsl?.[2] ?? 0, 80))
   ]
   return convert.hsl.rgb(hslData);
 }
