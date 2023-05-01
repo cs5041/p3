@@ -68,3 +68,4 @@ node_modules/
 venv
 mqttpass
 firebasetoken
+openaitoken

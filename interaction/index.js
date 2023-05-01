@@ -20,6 +20,15 @@ const functions = getFunctions(app);
 const database = getDatabase(app);
 
 const firebasetoken = readFileSync('firebasetoken', { encoding: 'utf8' }).trim();
+const openaitoken = readFileSync('openaitoken', { encoding: 'utf8' }).trim();
+
+import { Configuration, OpenAIApi } from "openai";
+const configuration = new Configuration({
+    apiKey: openaitoken,
+});
+const openai = new OpenAIApi(configuration);
+
+const systemPrompt = "You are a fun and cute baby rabbit. You only reply with one sentence and under 90 characters. The reply must mention the color and the temperature.";
 
 (async () => {
     const getToken = httpsCallable(functions, "getToken");
@@ -106,16 +115,27 @@ const firebasetoken = readFileSync('firebasetoken', { encoding: 'utf8' }).trim()
             }
         });
 
-        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(8), limitToLast(1)), (snapshot) => {
+        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(8), limitToLast(1)), async (snapshot) => {
             const data = snapshot.val();
             if (data.timestamp > startTime && data.integer === 1) {
                 console.log(data);
+
+                const completion = await openai.createChatCompletion({
+                    model: "gpt-3.5-turbo",
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: `A human has moved you next to a grey rabbit. Also, the outside temperature is ${outsideTemp} degrees C. What do you tell the human?` },
+                    ],
+                    temperature: 1.8,
+                    max_tokens: 23
+                });
+
                 push(ref(database, "data"), {
                     userId: user.uid,
                     groupId: 20,
                     timestamp: serverTimestamp(),
                     type: "str",
-                    string: `You picked the grey rabbit! And the outside temperature is ${outsideTemp}C`
+                    string: completion?.data?.choices?.[0]?.message?.content ?? `You picked the grey rabbit! And the outside temperature is ${outsideTemp}C`
                 });
                 const scaleTemp = scale([0, 20], [0, 1])
                 const scaledTemp = scaleTemp(Math.max(0, Math.min(20, outsideTemp)));
@@ -130,16 +150,28 @@ const firebasetoken = readFileSync('firebasetoken', { encoding: 'utf8' }).trim()
             }
         });
 
-        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(9), limitToLast(1)), (snapshot) => {
+        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(9), limitToLast(1)), async (snapshot) => {
             const data = snapshot.val();
             if (data.timestamp > startTime && data.integer === 1) {
                 console.log(data);
+
+                const completion = await openai.createChatCompletion({
+                    model: "gpt-3.5-turbo",
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        { role: "user", content: `A human has moved you next to a white rabbit. Also, the inside temperature is ${insideTemp} degrees C. What do you tell the human?` },
+
+                    ],
+                    temperature: 1.8,
+                    max_tokens: 23
+                });
+
                 push(ref(database, "data"), {
                     userId: user.uid,
                     groupId: 20,
                     timestamp: serverTimestamp(),
                     type: "str",
-                    string: `You picked the white rabbit! And the inside temperature is ${insideTemp}C`
+                    string: completion?.data?.choices?.[0]?.message?.content ?? `You picked the white rabbit! And the inside temperature is ${insideTemp}C`
                 });
                 const scaleTemp = scale([0, 20], [0, 1])
                 const scaledTemp = scaleTemp(Math.max(0, Math.min(20, insideTemp)));
