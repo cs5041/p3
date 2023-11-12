@@ -1,8 +1,16 @@
 {
   "database": [
     {
-      "target": "sta-cs5041-p4",
-      "rules": "database.rules.json"
+      "target": "sta-cs5041-tutorial",
+      "rules": "database.tutorial.rules.json"
+    },
+    {
+      "target": "sta-cs5041-p2",
+      "rules": "database.p2.rules.json"
+    },
+    {
+      "target": "sta-cs5041-p3",
+      "rules": "database.p3.rules.json"
     }
   ],
   "functions": [

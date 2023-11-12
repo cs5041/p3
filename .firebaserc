@@ -5,8 +5,14 @@
   "targets": {
     "sta-cs5041": {
       "database": {
-        "sta-cs5041-p4": [
-          "sta-cs5041-p4"
+        "sta-cs5041-tutorial": [
+          "sta-cs5041-tutorial"
+        ],
+        "sta-cs5041-p2": [
+          "sta-cs5041-p2"
+        ],
+        "sta-cs5041-p3": [
+          "sta-cs5041-p3"
         ]
       }
     }

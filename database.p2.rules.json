@@ -1,0 +1,58 @@
+{
+    "rules": {
+        "public": {
+            ".read": "false && auth.uid !== null",
+            "$uid": {
+                "$messageId": {
+                    ".validate": "newData.hasChildren(['type', 'created', 'modified', 'message', 'content'])",
+                    ".write": "false && auth !== null && auth.uid === $uid && $messageId !== null",
+                    "type": {
+                        ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length < 50"
+                    },
+                    "created": {
+                        ".validate": "newData.isNumber() && newData.val() === (data.val() === null ? now : data.val())"
+                    },
+                    "modified": {
+                        ".validate": "newData.isNumber() && newData.val() === now"
+                    },
+                    "message": {
+                        ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length < 200"
+                    },
+                    "content": {
+                        ".validate": "newData.isString() && newData.val().length < 64000"
+                    },
+                    "$other": {
+                        ".validate": "false"
+                    }
+                }
+            }
+        },
+        "private": {
+            "$uid": {
+                ".read": "false && auth !== null && auth.uid === $uid",
+                "$messageId": {
+                    ".validate": "newData.hasChildren(['type', 'created', 'modified', 'message', 'content'])",
+                    ".write": "false && auth !== null && auth.uid === $uid && $messageId !== null",
+                    "type": {
+                        ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length < 50"
+                    },
+                    "created": {
+                        ".validate": "newData.isNumber() && newData.val() === (data.val() === null ? now : data.val())"
+                    },
+                    "modified": {
+                        ".validate": "newData.isNumber() && newData.val() === now"
+                    },
+                    "message": {
+                        ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length < 200"
+                    },
+                    "content": {
+                        ".validate": "newData.isString() && newData.val().length < 64000"
+                    },
+                    "$other": {
+                        ".validate": "false"
+                    }
+                }
+            }
+        }
+    }
+}
