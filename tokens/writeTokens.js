@@ -4,7 +4,7 @@ import { getDatabase } from 'firebase-admin/database';
 import { v4 as uuidv4 } from 'uuid';
 
 const admin = initializeApp({
-    databaseURL: "https://sta-cs5041-p4.firebaseio.com"
+    databaseURL: "https://sta-cs5041-auth.firebaseio.com"
 });
 const database = getDatabase(admin);
 
