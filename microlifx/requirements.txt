@@ -1,0 +1,2 @@
+pyserial==3.5
+lifxlan==1.2.7
