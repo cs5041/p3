@@ -68,20 +68,29 @@ def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("mqtt2oled")
+    client.subscribe("mqtt2oled/+")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    data = json.loads(msg.payload)
-    print(msg.topic + " " + str(data))
-    for i, text in enumerate(data):
-        if i <= 3:
-            text = re.sub(u'[^\\x00-\\x7F\\x80-\\xFF\\u0100-\\u017F\\u0180-\\u024F\\u1E00-\\u1EFF]', u'', text)
-            drawText(text, oleds[i])
+    print(msg.topic + " " + msg.payload)
+    topicPath = msg.topic.split('/')
+    if len(topicPath) == 2:
+        text = re.sub(u'[^\\x00-\\x7F\\x80-\\xFF\\u0100-\\u017F\\u0180-\\u024F\\u1E00-\\u1EFF]', u'', msg.payload)
+        olednum = topicPath[1]
+            if oledconfig == 'left':
+                if olednum >= 0 and olednum < 3:
+                    drawText(text, oleds[olednum])
+            elif oledconfig == 'right':
+                if olednum >= 3 and olednum < 6:
+                    drawText(text, oleds[olednum -3])
 
 mqttpass = ""
 with open("mqttpass") as password_file:
     mqttpass = password_file.read().strip(" \n\r")
+
+oledconfig = ""
+with open("oledconfig") as config_file:
+    oledconfig = config_file.read().strip(" \n\r")
 
 client = mqtt.Client()
 client.on_connect = on_connect
