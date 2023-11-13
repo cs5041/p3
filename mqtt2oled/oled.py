@@ -77,12 +77,12 @@ def on_message(client, userdata, msg):
     if len(topicPath) == 2:
         text = re.sub(u'[^\\x00-\\x7F\\x80-\\xFF\\u0100-\\u017F\\u0180-\\u024F\\u1E00-\\u1EFF]', u'', msg.payload)
         olednum = topicPath[1]
-            if oledconfig == 'left':
-                if olednum >= 0 and olednum < 3:
-                    drawText(text, oleds[olednum])
-            elif oledconfig == 'right':
-                if olednum >= 3 and olednum < 6:
-                    drawText(text, oleds[olednum -3])
+        if oledconfig == 'left':
+            if olednum >= 0 and olednum < 3:
+                drawText(text, oleds[olednum])
+        elif oledconfig == 'right':
+            if olednum >= 3 and olednum < 6:
+                drawText(text, oleds[olednum -3])
 
 mqttpass = ""
 with open("mqttpass") as password_file:
