@@ -8,6 +8,25 @@ referenceUnit = 104
 import RPi.GPIO as GPIO
 from hx711 import HX711
 
+import paho.mqtt.client as mqtt
+
+from struct import pack
+
+mqttpass = ""
+with open("mqttpass") as password_file:
+    mqttpass = password_file.read().strip(" \n\r")
+
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code "+str(rc))
+
+client = mqtt.Client()
+client.on_connect = on_connect
+client.username_pw_set("cs5041", mqttpass)
+
+client.connect("cs5041", 1883, 60)
+
+client.loop_start()
+
 GPIO.setwarnings(False)
 
 def cleanAndExit():
@@ -60,6 +79,7 @@ while True:
         # Prints the weight. Comment if you're debbuging the MSB and LSB issue.
         val = hx.get_weight(5)
         print(val)
+        client.publish('weight2mqtt', pack('d', val))
 
         # To get weight from both channels (if you have load cells hooked up 
         # to both channel A and B), do something like this
@@ -69,7 +89,7 @@ while True:
 
         hx.power_down()
         hx.power_up()
-        time.sleep(0.1)
+        time.sleep(5)
 
     except (KeyboardInterrupt, SystemExit):
         cleanAndExit()
