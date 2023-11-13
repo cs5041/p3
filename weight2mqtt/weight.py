@@ -3,21 +3,17 @@
 import time
 import sys
 
-EMULATE_HX711=False
+referenceUnit = 104
 
-referenceUnit = 1
+import RPi.GPIO as GPIO
+from hx711 import HX711
 
-if not EMULATE_HX711:
-    import RPi.GPIO as GPIO
-    from hx711 import HX711
-else:
-    from emulated_hx711 import HX711
+GPIO.setwarnings(False)
 
 def cleanAndExit():
     print("Cleaning...")
 
-    if not EMULATE_HX711:
-        GPIO.cleanup()
+    GPIO.cleanup()
         
     print("Bye!")
     sys.exit()
