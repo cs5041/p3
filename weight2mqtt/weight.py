@@ -10,8 +10,6 @@ from hx711 import HX711
 
 import paho.mqtt.client as mqtt
 
-from struct import pack
-
 mqttpass = ""
 with open("mqttpass") as password_file:
     mqttpass = password_file.read().strip(" \n\r")
@@ -79,7 +77,7 @@ while True:
         # Prints the weight. Comment if you're debbuging the MSB and LSB issue.
         val = hx.get_weight(5)
         print(val)
-        client.publish('weight2mqtt', pack('d', val))
+        client.publish('weight2mqtt', val)
 
         # To get weight from both channels (if you have load cells hooked up 
         # to both channel A and B), do something like this
