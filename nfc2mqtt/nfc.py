@@ -62,7 +62,7 @@ try:
         )
         key = kdf.derive(''.join([hex(i) for i in uid]))
         key = key.hex()
-        print('Found card with hashed UID:', key))
+        print('Found card with hashed UID:', key)
         client.publish('nfc2mqtt', key)
 except Exception as e:
     print(e)
