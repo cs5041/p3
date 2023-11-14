@@ -1,7 +1,7 @@
 {
     "type": "module",
     "dependencies": {
-        "firebase": "^9.19.1",
-        "openai": "^3.2.1"
+        "firebase": "^10.6.0",
+        "openai": "^4.17.5"
     }
 }

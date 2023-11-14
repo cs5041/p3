@@ -22,11 +22,11 @@ const database = getDatabase(app);
 const firebasetoken = readFileSync('firebasetoken', { encoding: 'utf8' }).trim();
 const openaitoken = readFileSync('openaitoken', { encoding: 'utf8' }).trim();
 
-import { Configuration, OpenAIApi } from "openai";
-const configuration = new Configuration({
-    apiKey: openaitoken,
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+    apiKey: openaitoken
 });
-const openai = new OpenAIApi(configuration);
 
 const systemPrompt = "You are a fun and cute baby rabbit. You only reply with one short sentence and under 80 characters. The reply must mention the temperature.";
 
@@ -97,7 +97,7 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
             if (data.timestamp > startTime && data.number === 1) {
                 console.log(data);
 
-                const completion = await openai.createChatCompletion({
+                const completion = await openai.chat.completions.create({
                     model: "gpt-3.5-turbo-1106",
                     messages: [
                         { role: "system", content: systemPrompt },
