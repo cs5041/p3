@@ -119,7 +119,7 @@ const writeToFirebase = (uid, groupId, value) => {
       type: "number",
       number: value ? 1 : 0
     });
-  } else if (groupId === 5 || groupId === 6 || groupId === 7) {
+  } else if (groupId >= 13 && groupId <= 19) {
     push(ref(database, "data"), {
       userId: uid,
       groupId: groupId,
