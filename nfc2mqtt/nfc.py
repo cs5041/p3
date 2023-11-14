@@ -60,7 +60,7 @@ try:
             r=8,
             p=1,
         )
-        key = kdf.derive(''.join([hex(i) for i in uid]))
+        key = kdf.derive((''.join([hex(i) for i in uid])).encode('utf-8'))
         key = key.hex()
         print('Found card with hashed UID:', key)
         client.publish('nfc2mqtt', key)

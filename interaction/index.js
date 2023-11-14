@@ -7,11 +7,11 @@ import { getDatabase, serverTimestamp, push, ref, query, orderByChild, equalTo, 
 const firebaseConfig = {
     apiKey: "AIzaSyDBjUEw_DQNMQsZJWfTtLL0PQJoH-xF0kk",
     authDomain: "sta-cs5041.firebaseapp.com",
-    databaseURL: "https://sta-cs5041-p4.firebaseio.com",
+    databaseURL: "https://sta-cs5041-p3.firebaseio.com",
     projectId: "sta-cs5041",
     storageBucket: "sta-cs5041.appspot.com",
     messagingSenderId: "639987847762",
-    appId: "1:639987847762:web:c5a35616a1aa1cf243458b"
+    appId: "1:639987847762:web:1d86691716f6fb5443458b"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -121,7 +121,7 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
                 console.log(data);
 
                 const completion = await openai.createChatCompletion({
-                    model: "gpt-3.5-turbo",
+                    model: "gpt-3.5-turbo-1106",
                     messages: [
                         { role: "system", content: systemPrompt },
                         { role: "user", content: `A human has moved you next to a grey rabbit. Also, the outside temperature is ${outsideTemp} degrees C. What do you tell the human?` },
