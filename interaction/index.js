@@ -28,7 +28,7 @@ const openai = new OpenAI({
     apiKey: openaitoken
 });
 
-const systemPrompt = "You are a fun and cute baby rabbit. You only reply with one short sentence and under 80 characters. The reply must mention the temperature.";
+const systemPrompt = "You are a fun and cute baby rabbit. You only reply with one short sentence and under 80 characters. The reply must mention the temperature in degrees as well.";
 
 (async () => {
     const getToken = httpsCallable(functions, "getToken");
@@ -112,7 +112,7 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
                     groupId: 30,
                     timestamp: serverTimestamp(),
                     type: "string",
-                    string: completion?.data?.choices?.[0]?.message?.content ?? `The outside temperature is ${outsideTemp}C`
+                    string: completion?.choices?.[0]?.message?.content ?? `The outside temperature is ${outsideTemp}C`
                 });
             }
         });
