@@ -45,18 +45,18 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
         onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(1), limitToLast(1)), (snapshot) => {
             const data = snapshot.val();
             console.log(data);
-            insideTemp = data.integer;
+            insideTemp = data.number;
         });
 
         onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(2), limitToLast(1)), (snapshot) => {
             const data = snapshot.val();
             console.log(data);
-            outsideTemp = data.integer;
+            outsideTemp = data.number;
         });
 
         onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(13), limitToLast(1)), (snapshot) => {
             const data = snapshot.val();
-            if (data.timestamp > startTime && data.integer === 1) {
+            if (data.timestamp > startTime && data.number === 1) {
                 console.log(data);
                 push(ref(database, "data"), {
                     userId: user.uid,
@@ -75,7 +75,7 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
 
         onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(14), limitToLast(1)), (snapshot) => {
             const data = snapshot.val();
-            if (data.timestamp > startTime && data.integer === 1) {
+            if (data.timestamp > startTime && data.number === 1) {
                 console.log(data);
                 push(ref(database, "data"), {
                     userId: user.uid,
@@ -94,7 +94,7 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
 
         onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(10), limitToLast(1)), async (snapshot) => {
             const data = snapshot.val();
-            if (data.timestamp > startTime && data.integer === 1) {
+            if (data.timestamp > startTime && data.number === 1) {
                 console.log(data);
 
                 const completion = await openai.createChatCompletion({
@@ -111,7 +111,7 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
                     userId: user.uid,
                     groupId: 30,
                     timestamp: serverTimestamp(),
-                    type: "str",
+                    type: "string",
                     string: completion?.data?.choices?.[0]?.message?.content ?? `The outside temperature is ${outsideTemp}C`
                 });
             }
