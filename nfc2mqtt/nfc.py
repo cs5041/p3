@@ -7,6 +7,8 @@ After initialization, try waving various 13.56MHz RFID cards over it!
 
 import RPi.GPIO as GPIO
 
+Use GPIO.setwarnings(False)
+
 from pn532 import *
 
 import paho.mqtt.client as mqtt
@@ -64,6 +66,7 @@ try:
         key = key.hex()
         print('Found card with hashed UID:', key)
         client.publish('nfc2mqtt', key)
+        time.sleep(5)
 except Exception as e:
     print(e)
 finally:
