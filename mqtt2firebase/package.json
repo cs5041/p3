@@ -1,7 +1,7 @@
 {
   "type": "module",
   "dependencies": {
-    "firebase": "^9.19.1",
-    "mqtt": "^4.3.7"
+    "firebase": "^10.6.0",
+    "mqtt": "^5.2.2"
   }
 }

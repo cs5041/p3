@@ -3,3 +3,4 @@ services:
   mqtt2firebase:
     build: .
     restart: always
+    network_mode: host
