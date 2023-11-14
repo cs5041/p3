@@ -128,12 +128,12 @@ const writeToFirebase = (uid, groupId, value) => {
       number: value === 'single' ? 1 : (value === 'double' ? 2 : (value === 'long' ? 3 : 0))
     });
   } else {
-    push(ref(database, "/data"), {
+    push(ref(database, "data"), {
       userId: uid,
       groupId: groupId,
       timestamp: serverTimestamp(),
       type: "string",
-      string: val.toString()
+      string: value.toString()
     });
   }
 }
