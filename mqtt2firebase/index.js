@@ -3,8 +3,7 @@ import { connect } from 'mqtt';
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
-import { getDatabase, serverTimestamp, push, ref, onValue, query, orderByChild, equalTo, limitToLast } from "firebase/database";
-import convert from 'color-convert';
+import { getDatabase, serverTimestamp, push, ref, onValue, query, orderByChild, equalTo, limitToLast, update } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDBjUEw_DQNMQsZJWfTtLL0PQJoH-xF0kk",
@@ -40,38 +39,67 @@ client.on('connect', function () {
       console.error(err);
     }
   })
+  client.subscribe('weight2mqtt', function (err) {
+    if (err) {
+      console.error(err);
+    }
+  })
+  client.subscribe('nfc2mqtt', function (err) {
+    if (err) {
+      console.error(err);
+    }
+  })
 });
 
 const deviceToGroupId = {
-  "TH 1": {
+  "Hue Motion 1": {
+    temperature: 3,
+    illuminance_lux: 21,
+    occupancy: 11
+  },
+  "Hue Motion 2": {
+    temperature: 4,
+    illuminance_lux: 22,
+    occupancy: 12
+  },
+  "T&H 1": {
     temperature: 1,
-    humidity: 11
+    humidity: 5
   },
-  "TH 2": {
+  "T&H 2": {
     temperature: 2,
-    humidity: 12
+    humidity: 6
   },
-  "PIR 1": {
-    occupancy: 3 // 0: no motion (false), 1: motion (true)
+  "Motion 1": {
+    occupancy: 9 // 0: no motion (false), 1: motion (true)
   },
-  "PIR 2": {
-    occupancy: 4
+  "Motion 2": {
+    occupancy: 10
   },
   "Button 1": {
-    action: 5 // 1 - single, 2 - double, 3 - long
+    action: 13 // 1 - single, 2 - double, 3 - long
   },
   "Button 2": {
-    action: 6
+    action: 14
   },
   "Button 3": {
-    action: 7
+    action: 15
   },
-  "Contact 1": {
-    contact: 8 // 0 - no contact (false), 1 - contact (true)
+  "Button 4": {
+    action: 16
   },
-  "Contact 2": {
-    contact: 9
-  }
+  "Button 5": {
+    action: 17
+  },
+  "Button 6": {
+    action: 18
+  },
+  "Button 7": {
+    action: 19
+  },
+  "Door Contact 1": {
+    contact: 20 // 0 - no contact (false), 1 - contact (true)
+  },
 }
 
 const writeToFirebase = (uid, groupId, value) => {
@@ -80,43 +108,34 @@ const writeToFirebase = (uid, groupId, value) => {
       userId: uid,
       groupId: groupId,
       timestamp: serverTimestamp(),
-      type: "int",
-      integer: Math.round(value)
+      type: "number",
+      number: value
     });
   } else if (typeof value === 'boolean') {
     push(ref(database, "data"), {
       userId: uid,
       groupId: groupId,
       timestamp: serverTimestamp(),
-      type: "int",
-      integer: value ? 1 : 0
+      type: "number",
+      number: value ? 1 : 0
     });
   } else if (groupId === 5 || groupId === 6 || groupId === 7) {
     push(ref(database, "data"), {
       userId: uid,
       groupId: groupId,
       timestamp: serverTimestamp(),
-      type: "int",
-      integer: value === 'single' ? 1 : (value === 'double' ? 2 : (value === 'long' ? 3 : 0))
+      type: "number",
+      number: value === 'single' ? 1 : (value === 'double' ? 2 : (value === 'long' ? 3 : 0))
     });
   } else {
     push(ref(database, "/data"), {
       userId: uid,
       groupId: groupId,
       timestamp: serverTimestamp(),
-      type: "str",
+      type: "string",
       string: val.toString()
     });
   }
-}
-
-const hslToRgb = (hsl) => {
-  const hslData = [
-    Math.max(0, Math.min(hsl?.[0] ?? 0, 360)),
-    Math.max(0, Math.min(hsl?.[1] ?? 0, 100)),
-    Math.max(0, Math.min(hsl?.[2] ?? 0, 80))
-  ]
-  return convert.hsl.rgb(hslData);
 }
 
 const writeToMqtt = (topic, data) => {
@@ -127,20 +146,19 @@ const writeToMqtt = (topic, data) => {
   };
 }
 
-const updateLight = (lightId, hsl) => {
-  const rgb = hslToRgb(hsl);
+const updateLight = (lightId, r, g, b, brightness) => {
   writeToMqtt(`zigbee2mqtt/Light ${lightId}/set`, {
     color: {
-      r: rgb?.[0] ?? 0,
-      g: rgb?.[1] ?? 0,
-      b: rgb?.[2] ?? 0
+      r: r ?? 0,
+      g: g ?? 0,
+      b: b ?? 0
     },
-    brightness: Math.floor((hsl[2] / 100) * 254)
+    brightness: brightness
   });
 }
 
-const writeText = (text) => {
-  writeToMqtt(`mqtt2oled`, [text?.[0] ?? '', text?.[1] ?? '', text?.[2] ?? '']);
+const writeText = (id, text) => {
+  writeToMqtt(`mqtt2oled/${id}`, text);
 }
 
 (async () => {
@@ -150,43 +168,118 @@ const writeText = (text) => {
     const userCredentials = await signInWithCustomToken(auth, token.data.token);
     const user = userCredentials.user;
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(20), limitToLast(3)), (snapshot) => {
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(30), limitToLast(3)), (snapshot) => {
       const data = snapshot.val();
       const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('mqtt2oled', text);
-      writeText(text.reverse())
+      console.log('mqtt2oled 0', text?.[0]);
+      writeText(0, text?.[0])
     });
 
-    let hues = [];
-    let saturations = [];
-    let brightnesses = [];
-    let lightsUpdate = false;
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(31), limitToLast(3)), (snapshot) => {
+      const data = snapshot.val();
+      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+      console.log('mqtt2oled 1', text?.[0]);
+      writeText(1, text?.[0])
+    });
 
-    setInterval(() => {
-      if (lightsUpdate) {
-        const lights = hues.map((el, i) => [hues?.[i] ?? 0, saturations?.[i] ?? 0, brightnesses?.[i] ?? 0])
-        console.log('lights', lights);
-        lights.reverse().forEach((el, i) => updateLight(i + 1, el));
-        lightsUpdate = false;
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(32), limitToLast(3)), (snapshot) => {
+      const data = snapshot.val();
+      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+      console.log('mqtt2oled 2', text?.[0]);
+      writeText(2, text?.[0])
+    });
+
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(33), limitToLast(3)), (snapshot) => {
+      const data = snapshot.val();
+      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+      console.log('mqtt2oled 3', text?.[0]);
+      writeText(3, text?.[0])
+    });
+
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(34), limitToLast(3)), (snapshot) => {
+      const data = snapshot.val();
+      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+      console.log('mqtt2oled 4', text?.[0]);
+      writeText(4, text?.[0])
+    });
+
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(35), limitToLast(3)), (snapshot) => {
+      const data = snapshot.val();
+      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+      console.log('mqtt2oled 5', text?.[0]);
+      writeText(5, text?.[0])
+    });
+
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(36), limitToLast(1)), (snapshot) => {
+      const data = snapshot.val();
+      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+      console.log('light 1', text);
+      try {
+        const lightData = JSON.parse(text?.[0] ?? '{}');
+        updateLight(1, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+      } catch (err) {
+        console.error(err)
       }
-    }, 1000);
-
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(21), limitToLast(5)), (snapshot1) => {
-      hues = Object.values(snapshot1.val() ?? {}).map(el => parseInt(el?.integer ?? 0));
-      console.log('lights hues', hues);
-      lightsUpdate = true;
     });
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(22), limitToLast(5)), (snapshot2) => {
-      saturations = Object.values(snapshot2.val() ?? {}).map(el => parseInt(el?.integer ?? 0));
-      console.log('lights saturations', saturations);
-      lightsUpdate = true;
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(37), limitToLast(1)), (snapshot) => {
+      const data = snapshot.val();
+      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+      console.log('light 2', text);
+      try {
+        const lightData = JSON.parse(text?.[0] ?? '{}');
+        updateLight(2, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+      } catch (err) {
+        console.error(err)
+      }
     });
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(23), limitToLast(5)), (snapshot3) => {
-      brightnesses = Object.values(snapshot3.val() ?? {}).map(el => parseInt(el?.integer ?? 0));
-      console.log('lights brightnesses', brightnesses);
-      lightsUpdate = true;
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(38), limitToLast(1)), (snapshot) => {
+      const data = snapshot.val();
+      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+      console.log('light 3', text);
+      try {
+        const lightData = JSON.parse(text?.[0] ?? '{}');
+        updateLight(3, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+      } catch (err) {
+        console.error(err)
+      }
+    });
+
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(39), limitToLast(1)), (snapshot) => {
+      const data = snapshot.val();
+      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+      console.log('light 4', text);
+      try {
+        const lightData = JSON.parse(text?.[0] ?? '{}');
+        updateLight(4, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+      } catch (err) {
+        console.error(err)
+      }
+    });
+
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(40), limitToLast(1)), (snapshot) => {
+      const data = snapshot.val();
+      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+      console.log('light 5', text);
+      try {
+        const lightData = JSON.parse(text?.[0] ?? '{}');
+        updateLight(5, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+      } catch (err) {
+        console.error(err)
+      }
+    });
+
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(41), limitToLast(1)), (snapshot) => {
+      const data = snapshot.val();
+      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+      console.log('light 6', text);
+      try {
+        const lightData = JSON.parse(text?.[0] ?? '{}');
+        updateLight(6, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+      } catch (err) {
+        console.error(err)
+      }
     });
 
     client.on('message', function (topic, message) {
@@ -200,6 +293,13 @@ const writeText = (text) => {
           Object.entries(mapping).forEach(([field, groupId]) => {
             writeToFirebase(user.uid, groupId, messageObject[field])
           })
+        }
+      } else if (topicArray.length === 1) {
+        const device = topicArray[0];
+        if (device === 'weight2mqtt') {
+          writeToFirebase(user.uid, 24, parseFloat(message.toString()))
+        } else if (device === 'nfc2mqtt') {
+          writeToFirebase(user.uid, 25, message.toString())
         }
       }
     });

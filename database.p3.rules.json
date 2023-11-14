@@ -12,7 +12,7 @@
           ".validate": "newData.val() === auth.uid"
         },
         "groupId": {
-          ".validate": "newData.isNumber() && ((auth.token.iot === 1 && newData.val() >= 1 && newData.val() <= 29) || (newData.val() >= 30 && newData.val() <= 41 && newData.parent().child('type').val() === 'string') || (auth.token.iot === 1 && newData.val() === 42) || (newData.val() >= 43 && newData.val() <= 60))"
+          ".validate": "newData.isNumber() && ((auth.token.iot === 1 && newData.val() >= 1 && newData.val() <= 29) || (newData.val() >= 30 && newData.val() <= 41 && newData.parent().child('type').val() === 'string') || (auth.token.fortytwo === 1 && newData.val() === 42) || (newData.val() >= 43 && newData.val() <= 60))"
         },
         "timestamp": {
           ".validate": "newData.isNumber() && newData.val() === now"
