@@ -1,11 +1,11 @@
 {
     "rules": {
         "public": {
-            ".read": "false && auth.uid !== null",
+            ".read": "auth.uid !== null",
             "$uid": {
                 "$messageId": {
                     ".validate": "newData.hasChildren(['type', 'created', 'modified', 'message', 'content'])",
-                    ".write": "false && auth !== null && auth.uid === $uid && $messageId !== null",
+                    ".write": "auth !== null && auth.uid === $uid && $messageId !== null",
                     "type": {
                         ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length < 50"
                     },
@@ -29,10 +29,10 @@
         },
         "private": {
             "$uid": {
-                ".read": "false && auth !== null && auth.uid === $uid",
+                ".read": "auth !== null && auth.uid === $uid",
                 "$messageId": {
                     ".validate": "newData.hasChildren(['type', 'created', 'modified', 'message', 'content'])",
-                    ".write": "false && auth !== null && auth.uid === $uid && $messageId !== null",
+                    ".write": "auth !== null && auth.uid === $uid && $messageId !== null",
                     "type": {
                         ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length < 50"
                     },
