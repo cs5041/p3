@@ -20,7 +20,7 @@
         "type": {
           ".validate": "newData.isString() && (newData.val() === 'string' || newData.val() === 'number')"
         },
-        "integer": {
+        "number": {
           ".validate": "newData.parent().child('type').val() === 'number' && newData.isNumber() && newData.val() >= -1024 && newData.val() <= 1024"
         },
         "string": {
