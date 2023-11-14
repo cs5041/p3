@@ -28,7 +28,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-const systemPrompt = "You are a fun and cute baby rabbit. You only reply with one short sentence and under 80 characters. The reply must mention the color and the temperature.";
+const systemPrompt = "You are a fun and cute baby rabbit. You only reply with one short sentence and under 80 characters. The reply must mention the temperature.";
 
 (async () => {
     const getToken = httpsCallable(functions, "getToken");
@@ -42,80 +42,57 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
         let outsideTemp = 0;
         let insideTemp = 0;
 
-        const scale = (fromRange, toRange) => {
-            const d = (toRange[1] - toRange[0]) / (fromRange[1] - fromRange[0]);
-            return from => (from - fromRange[0]) * d + toRange[0];
-        };
-
         onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(1), limitToLast(1)), (snapshot) => {
-            const data = snapshot.val();
-            console.log(data);
-            outsideTemp = data.integer;
-        });
-
-        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(2), limitToLast(1)), (snapshot) => {
             const data = snapshot.val();
             console.log(data);
             insideTemp = data.integer;
         });
 
-        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(4), limitToLast(1)), (snapshot) => {
+        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(2), limitToLast(1)), (snapshot) => {
+            const data = snapshot.val();
+            console.log(data);
+            outsideTemp = data.integer;
+        });
+
+        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(13), limitToLast(1)), (snapshot) => {
             const data = snapshot.val();
             if (data.timestamp > startTime && data.integer === 1) {
                 console.log(data);
                 push(ref(database, "data"), {
                     userId: user.uid,
-                    groupId: 21,
+                    groupId: 36,
                     timestamp: serverTimestamp(),
-                    type: "int",
-                    integer: Math.random() * 360
+                    type: "string",
+                    string: JSON.stringify({
+                        red: Math.random() * 255,
+                        green: Math.random() * 255,
+                        blue: Math.random() * 255,
+                        brightness: Math.random() * 255
+                    })
                 });
             }
         });
 
-        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(5), limitToLast(1)), (snapshot) => {
+        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(14), limitToLast(1)), (snapshot) => {
             const data = snapshot.val();
-            if (data.timestamp > startTime) {
-                console.log(data)
-                push(ref(database, "data"), {
-                    userId: user.uid,
-                    groupId: 21,
-                    timestamp: serverTimestamp(),
-                    type: "int",
-                    integer: Math.random() * 360
-                });
-            }
-        });
-
-        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(6), limitToLast(1)), (snapshot) => {
-            const data = snapshot.val();
-            if (data.timestamp > startTime) {
-                console.log(data)
-                push(ref(database, "data"), {
-                    userId: user.uid,
-                    groupId: 22,
-                    timestamp: serverTimestamp(),
-                    type: "int",
-                    integer: Math.random() * 100
-                });
-            }
-        });
-
-        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(7), limitToLast(1)), (snapshot) => {
-            const data = snapshot.val();
-            if (data.timestamp > startTime) {
+            if (data.timestamp > startTime && data.integer === 1) {
                 console.log(data);
                 push(ref(database, "data"), {
                     userId: user.uid,
-                    groupId: 23,
+                    groupId: 37,
                     timestamp: serverTimestamp(),
-                    type: "int",
-                    integer: Math.random() * 100
+                    type: "string",
+                    string: JSON.stringify({
+                        red: Math.random() * 255,
+                        green: Math.random() * 255,
+                        blue: Math.random() * 255,
+                        brightness: Math.random() * 255
+                    })
                 });
             }
         });
 
-        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(8), limitToLast(1)), async (snapshot) => {
+        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(10), limitToLast(1)), async (snapshot) => {
             const data = snapshot.val();
             if (data.timestamp > startTime && data.integer === 1) {
                 console.log(data);
@@ -124,7 +101,7 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
                     model: "gpt-3.5-turbo-1106",
                     messages: [
                         { role: "system", content: systemPrompt },
-                        { role: "user", content: `A human has moved you next to a grey rabbit. Also, the outside temperature is ${outsideTemp} degrees C. What do you tell the human?` },
+                        { role: "user", content: `The outside temperature is ${outsideTemp} degrees C. What do you tell the human?` },
                     ],
                     temperature: 1,
                     max_tokens: 21
@@ -132,55 +109,10 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
 
                 push(ref(database, "data"), {
                     userId: user.uid,
-                    groupId: 20,
+                    groupId: 30,
                     timestamp: serverTimestamp(),
                     type: "str",
-                    string: completion?.data?.choices?.[0]?.message?.content ?? `You picked the grey rabbit! And the outside temperature is ${outsideTemp}C`
-                });
-                const scaleTemp = scale([0, 20], [0, 1])
-                const scaledTemp = scaleTemp(Math.max(0, Math.min(20, outsideTemp)));
-                console.log(scaledTemp);
-                push(ref(database, "data"), {
-                    userId: user.uid,
-                    groupId: 21,
-                    timestamp: serverTimestamp(),
-                    type: "int",
-                    integer: scaledTemp * 360
-                });
-            }
-        });
-
-        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(9), limitToLast(1)), async (snapshot) => {
-            const data = snapshot.val();
-            if (data.timestamp > startTime && data.integer === 1) {
-                console.log(data);
-
-                const completion = await openai.createChatCompletion({
-                    model: "gpt-3.5-turbo",
-                    messages: [
-                        { role: "system", content: systemPrompt },
-                        { role: "user", content: `A human has moved you next to a white rabbit. Also, the inside temperature is ${insideTemp} degrees C. What do you tell the human?` },
-                    ],
-                    temperature: 1,
-                    max_tokens: 21
-                });
-
-                push(ref(database, "data"), {
-                    userId: user.uid,
-                    groupId: 20,
-                    timestamp: serverTimestamp(),
-                    type: "str",
-                    string: completion?.data?.choices?.[0]?.message?.content ?? `You picked the white rabbit! And the inside temperature is ${insideTemp}C`
-                });
-                const scaleTemp = scale([0, 20], [0, 1])
-                const scaledTemp = scaleTemp(Math.max(0, Math.min(20, insideTemp)));
-                console.log(scaledTemp);
-                push(ref(database, "data"), {
-                    userId: user.uid,
-                    groupId: 21,
-                    timestamp: serverTimestamp(),
-                    type: "int",
-                    integer: scaledTemp * 360
+                    string: completion?.data?.choices?.[0]?.message?.content ?? `The outside temperature is ${outsideTemp}C`
                 });
             }
         });
