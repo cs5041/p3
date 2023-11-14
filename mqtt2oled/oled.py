@@ -76,7 +76,7 @@ def on_message(client, userdata, msg):
     topicPath = msg.topic.split('/')
     if len(topicPath) == 2:
         text = re.sub(u'[^\\x00-\\x7F\\x80-\\xFF\\u0100-\\u017F\\u0180-\\u024F\\u1E00-\\u1EFF]', u'', msg.payload.decode("utf-8"))
-        olednum = topicPath[1]
+        olednum = int(topicPath[1])
         if oledconfig == 'left':
             if olednum >= 0 and olednum < 3:
                 drawText(text, oleds[olednum])
