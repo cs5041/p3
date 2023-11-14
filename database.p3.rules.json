@@ -7,24 +7,24 @@
       ],
       "$dataId": {
         ".write": "auth.uid !== null && $dataId.length === 20 && !data.exists() && newData.exists()",
-        ".validate": "newData.hasChildren(['userId', 'groupId', 'timestamp', 'type']) && (newData.hasChild('integer') || newData.hasChild('string'))",
+        ".validate": "newData.hasChildren(['userId', 'groupId', 'timestamp', 'type']) && (newData.hasChild('number') || newData.hasChild('string'))",
         "userId": {
           ".validate": "newData.val() === auth.uid"
         },
         "groupId": {
-          ".validate": "newData.isNumber() && ((newData.val() === 20 && newData.parent().child('type').val() === 'str') || (newData.val() === 21 && newData.parent().child('type').val() === 'int') || (newData.val() === 22 && newData.parent().child('type').val() === 'int') || (newData.val() === 23 && newData.parent().child('type').val() === 'int') || (newData.val() >= 24 && newData.val() <= 40) || (auth.token.iot === 1 && newData.val() >= 1 && newData.val() <= 19))"
+          ".validate": "newData.isNumber() && ((auth.token.iot === 1 && newData.val() >= 1 && newData.val() <= 29) || (newData.val() >= 30 && newData.val() <= 41 && newData.parent().child('type').val() === 'string') || (auth.token.iot === 1 && newData.val() === 42) || (newData.val() >= 43 && newData.val() <= 60))"
         },
         "timestamp": {
           ".validate": "newData.isNumber() && newData.val() === now"
         },
         "type": {
-          ".validate": "newData.isString() && (newData.val() === 'str' || newData.val() === 'int')"
+          ".validate": "newData.isString() && (newData.val() === 'string' || newData.val() === 'number')"
         },
         "integer": {
-          ".validate": "newData.parent().child('type').val() === 'int' && newData.isNumber() && newData.val() >= -1024 && newData.val() <= 1024"
+          ".validate": "newData.parent().child('type').val() === 'number' && newData.isNumber() && newData.val() >= -1024 && newData.val() <= 1024"
         },
         "string": {
-          ".validate": "newData.parent().child('type').val() === 'str' && newData.isString() && newData.val().length <= 100"
+          ".validate": "newData.parent().child('type').val() === 'string' && newData.isString() && newData.val().length <= 100"
         },
         "$other": {
           ".validate": false
