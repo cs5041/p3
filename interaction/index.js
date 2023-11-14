@@ -64,10 +64,10 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
                     timestamp: serverTimestamp(),
                     type: "string",
                     string: JSON.stringify({
-                        red: Math.random() * 255,
-                        green: Math.random() * 255,
-                        blue: Math.random() * 255,
-                        brightness: Math.random() * 255
+                        red: Math.floor(Math.random() * 255),
+                        green: Math.floor(Math.random() * 255),
+                        blue: Math.floor(Math.random() * 255),
+                        brightness: Math.floor(Math.random() * 255)
                     })
                 });
             }
@@ -83,10 +83,10 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
                     timestamp: serverTimestamp(),
                     type: "string",
                     string: JSON.stringify({
-                        red: Math.random() * 255,
-                        green: Math.random() * 255,
-                        blue: Math.random() * 255,
-                        brightness: Math.random() * 255
+                        red: Math.floor(Math.random() * 255),
+                        green: Math.floor(Math.random() * 255),
+                        blue: Math.floor(Math.random() * 255),
+                        brightness: Math.floor(Math.random() * 255)
                     })
                 });
             }
