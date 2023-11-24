@@ -1,7 +1,7 @@
 {
   "rules": {
     "data": {
-      ".read": "auth.uid !== null",
+      ".read": "auth.uid !== null && ((query.limitToFirst !== null && query.limitToFirst <= 1000) || (query.limitToLast !== null && query.limitToLast <= 1000))",
       ".indexOn": [
         "groupId"
       ],
@@ -12,7 +12,7 @@
           ".validate": "newData.val() === auth.uid"
         },
         "groupId": {
-          ".validate": "newData.isNumber() && ((auth.token.iot === 1 && newData.val() >= 1 && newData.val() <= 29) || (newData.val() >= 30 && newData.val() <= 41 && newData.parent().child('type').val() === 'string') || (auth.token.fortytwo === 1 && newData.val() === 42) || (newData.val() >= 43 && newData.val() <= 60))"
+          ".validate": "newData.isNumber() && ((auth.token !== null && auth.token.iot !== null && auth.token.iot === 1 && newData.val() >= 1 && newData.val() <= 29) || (newData.val() >= 30 && newData.val() <= 41 && newData.parent().child('type').val() === 'string') || (auth.token.fortytwo === 1 && newData.val() === 42) || (newData.val() >= 43 && newData.val() <= 60))"
         },
         "timestamp": {
           ".validate": "newData.isNumber() && newData.val() === now"
@@ -21,7 +21,7 @@
           ".validate": "newData.isString() && (newData.val() === 'string' || newData.val() === 'number')"
         },
         "number": {
-          ".validate": "newData.parent().child('type').val() === 'number' && newData.isNumber() && newData.val() >= -1024 && newData.val() <= 1024"
+          ".validate": "newData.parent().child('type').val() === 'number' && newData.isNumber() && newData.val() >= -10240 && newData.val() <= 10240"
         },
         "string": {
           ".validate": "newData.parent().child('type').val() === 'string' && newData.isString() && newData.val().length <= 100"
