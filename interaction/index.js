@@ -92,7 +92,7 @@ const systemPrompt = "You are a fun and cute baby rabbit. You only reply with on
             }
         });
 
-        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(11), limitToLast(1)), async (snapshot) => {
+        onChildAdded(query(ref(database, 'data'), orderByChild('groupId'), equalTo(10), limitToLast(1)), async (snapshot) => {
             const data = snapshot.val();
             if (data.timestamp > startTime && data.number === 1) {
                 console.log(data);
