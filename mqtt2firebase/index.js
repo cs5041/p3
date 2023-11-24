@@ -168,42 +168,42 @@ const writeText = (id, text) => {
     const userCredentials = await signInWithCustomToken(auth, token.data.token);
     const user = userCredentials.user;
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(30), limitToLast(3)), (snapshot) => {
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(30), limitToLast(1)), (snapshot) => {
       const data = snapshot.val();
       const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
       console.log('mqtt2oled 0', text?.[0]);
       writeText(0, text?.[0])
     });
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(31), limitToLast(3)), (snapshot) => {
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(31), limitToLast(1)), (snapshot) => {
       const data = snapshot.val();
       const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
       console.log('mqtt2oled 1', text?.[0]);
       writeText(1, text?.[0])
     });
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(32), limitToLast(3)), (snapshot) => {
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(32), limitToLast(1)), (snapshot) => {
       const data = snapshot.val();
       const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
       console.log('mqtt2oled 2', text?.[0]);
       writeText(2, text?.[0])
     });
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(33), limitToLast(3)), (snapshot) => {
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(33), limitToLast(1)), (snapshot) => {
       const data = snapshot.val();
       const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
       console.log('mqtt2oled 3', text?.[0]);
       writeText(3, text?.[0])
     });
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(34), limitToLast(3)), (snapshot) => {
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(34), limitToLast(1)), (snapshot) => {
       const data = snapshot.val();
       const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
       console.log('mqtt2oled 4', text?.[0]);
       writeText(4, text?.[0])
     });
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(35), limitToLast(3)), (snapshot) => {
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(35), limitToLast(1)), (snapshot) => {
       const data = snapshot.val();
       const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
       console.log('mqtt2oled 5', text?.[0]);
