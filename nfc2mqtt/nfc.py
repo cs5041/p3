@@ -7,7 +7,7 @@ After initialization, try waving various 13.56MHz RFID cards over it!
 
 import RPi.GPIO as GPIO
 
-Use GPIO.setwarnings(False)
+GPIO.setwarnings(False)
 
 from pn532 import *
 
