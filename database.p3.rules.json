@@ -1,7 +1,7 @@
 {
   "rules": {
     "data": {
-      ".read": "auth.uid !== null && ((query.limitToFirst !== null && query.limitToFirst <= 50) || (query.limitToLast !== null && query.limitToLast <= 50))",
+      ".read": "auth.uid !== null && ((query.limitToFirst !== null && ((auth.token.limit !== null && query.limitToFirst <= auth.token.limit) || query.limitToFirst <= 50)) || (query.limitToLast !== null && ((auth.token.limit !== null && query.limitToLast <= auth.token.limit) || query.limitToLast <= 50)))",
       ".indexOn": [
         "groupId"
       ],
