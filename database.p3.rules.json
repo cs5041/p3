@@ -3,7 +3,8 @@
     "data": {
       ".read": "auth.uid !== null && ((query.limitToFirst !== null && ((auth.token.limit !== null && query.limitToFirst <= auth.token.limit) || query.limitToFirst <= 50)) || (query.limitToLast !== null && ((auth.token.limit !== null && query.limitToLast <= auth.token.limit) || query.limitToLast <= 50)))",
       ".indexOn": [
-        "groupId"
+        "groupId",
+        "timestamp"
       ],
       "$dataId": {
         ".write": "auth.uid !== null && $dataId.length === 20 && !data.exists() && newData.exists()",
