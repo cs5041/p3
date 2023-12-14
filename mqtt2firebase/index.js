@@ -161,6 +161,18 @@ const writeText = (id, text) => {
   writeToMqtt(`mqtt2oled/${id}`, text);
 }
 
+const throttledFunction = (func, throttleTime) => {
+  let startTime = -1;
+  return (...args) => {
+    if (startTime === -1 || Date.now() - startTime > throttleTime) {
+      func(...args);
+      startTime = Date.now();
+    }
+  }
+}
+
+const throttleTime = 1000;
+
 (async () => {
   const getToken = httpsCallable(functions, "getToken");
   const token = await getToken({ token: firebasetoken });
@@ -168,119 +180,131 @@ const writeText = (id, text) => {
     const userCredentials = await signInWithCustomToken(auth, token.data.token);
     const user = userCredentials.user;
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(30), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('mqtt2oled 0', text?.[0]);
-      writeText(0, text?.[0])
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(30), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('mqtt2oled 0', text?.[0]);
+        writeText(0, text?.[0])
+      }), throttleTime);
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(31), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('mqtt2oled 1', text?.[0]);
-      writeText(1, text?.[0])
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(31), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('mqtt2oled 1', text?.[0]);
+        writeText(1, text?.[0])
+      }), throttleTime);
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(32), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('mqtt2oled 2', text?.[0]);
-      writeText(2, text?.[0])
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(32), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('mqtt2oled 2', text?.[0]);
+        writeText(2, text?.[0])
+      }), throttleTime);
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(33), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('mqtt2oled 3', text?.[0]);
-      writeText(3, text?.[0])
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(33), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('mqtt2oled 3', text?.[0]);
+        writeText(3, text?.[0])
+      }), throttleTime);
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(34), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('mqtt2oled 4', text?.[0]);
-      writeText(4, text?.[0])
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(34), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('mqtt2oled 4', text?.[0]);
+        writeText(4, text?.[0])
+      }), throttleTime);
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(35), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('mqtt2oled 5', text?.[0]);
-      writeText(5, text?.[0])
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(35), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('mqtt2oled 5', text?.[0]);
+        writeText(5, text?.[0])
+      }), throttleTime);
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(36), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('light 1', text);
-      try {
-        const lightData = JSON.parse(text?.[0] ?? '{}');
-        updateLight(1, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
-      } catch (err) {
-        console.error(err)
-      }
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(36), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('light 1', text);
+        try {
+          const lightData = JSON.parse(text?.[0] ?? '{}');
+          updateLight(1, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+        } catch (err) {
+          console.error(err)
+        }
+      }), throttleTime);
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(37), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('light 2', text);
-      try {
-        const lightData = JSON.parse(text?.[0] ?? '{}');
-        updateLight(2, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
-      } catch (err) {
-        console.error(err)
-      }
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(37), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('light 2', text);
+        try {
+          const lightData = JSON.parse(text?.[0] ?? '{}');
+          updateLight(2, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+        } catch (err) {
+          console.error(err)
+        }
+      }), throttleTime);
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(38), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('light 3', text);
-      try {
-        const lightData = JSON.parse(text?.[0] ?? '{}');
-        updateLight(3, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
-      } catch (err) {
-        console.error(err)
-      }
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(38), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('light 3', text);
+        try {
+          const lightData = JSON.parse(text?.[0] ?? '{}');
+          updateLight(3, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+        } catch (err) {
+          console.error(err)
+        }
+      }), throttleTime);
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(39), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('light 4', text);
-      try {
-        const lightData = JSON.parse(text?.[0] ?? '{}');
-        updateLight(4, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
-      } catch (err) {
-        console.error(err)
-      }
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(39), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('light 4', text);
+        try {
+          const lightData = JSON.parse(text?.[0] ?? '{}');
+          updateLight(4, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+        } catch (err) {
+          console.error(err)
+        }
+      }), throttleTime);
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(40), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('light 5', text);
-      try {
-        const lightData = JSON.parse(text?.[0] ?? '{}');
-        updateLight(5, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
-      } catch (err) {
-        console.error(err)
-      }
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(40), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('light 5', text);
+        try {
+          const lightData = JSON.parse(text?.[0] ?? '{}');
+          updateLight(5, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+        } catch (err) {
+          console.error(err)
+        }
+      }), throttleTime);
 
-    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(41), limitToLast(1)), (snapshot) => {
-      const data = snapshot.val();
-      const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
-      console.log('light 6', text);
-      try {
-        const lightData = JSON.parse(text?.[0] ?? '{}');
-        updateLight(6, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
-      } catch (err) {
-        console.error(err)
-      }
-    });
+    onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(41), limitToLast(1)),
+      throttledFunction((snapshot) => {
+        const data = snapshot.val();
+        const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
+        console.log('light 6', text);
+        try {
+          const lightData = JSON.parse(text?.[0] ?? '{}');
+          updateLight(6, lightData?.red, lightData?.green, lightData?.blue, lightData?.brightness)
+        } catch (err) {
+          console.error(err)
+        }
+      }), throttleTime);
 
     client.on('message', function (topic, message) {
       console.log(topic.toString(), message.toString());
