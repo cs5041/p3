@@ -163,15 +163,19 @@ const writeText = (id, text) => {
 
 const throttledFunction = (func, throttleTime) => {
   let startTime = -1;
+  let timer;
   return (...args) => {
+    clearTimeout(timer);
     if (startTime === -1 || Date.now() - startTime > throttleTime) {
       func(...args);
       startTime = Date.now();
+    } else {
+      timer = setTimeout(() => func(...args), throttleTime);
     }
   }
 }
 
-const throttleTime = 1000;
+const throttleTime = 2000;
 
 (async () => {
   const getToken = httpsCallable(functions, "getToken");
@@ -186,7 +190,7 @@ const throttleTime = 1000;
         const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
         console.log('mqtt2oled 0', text?.[0]);
         writeText(0, text?.[0])
-      }), throttleTime);
+      }, throttleTime));
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(31), limitToLast(1)),
       throttledFunction((snapshot) => {
@@ -194,7 +198,7 @@ const throttleTime = 1000;
         const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
         console.log('mqtt2oled 1', text?.[0]);
         writeText(1, text?.[0])
-      }), throttleTime);
+      }, throttleTime));
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(32), limitToLast(1)),
       throttledFunction((snapshot) => {
@@ -202,7 +206,7 @@ const throttleTime = 1000;
         const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
         console.log('mqtt2oled 2', text?.[0]);
         writeText(2, text?.[0])
-      }), throttleTime);
+      }, throttleTime));
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(33), limitToLast(1)),
       throttledFunction((snapshot) => {
@@ -210,7 +214,7 @@ const throttleTime = 1000;
         const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
         console.log('mqtt2oled 3', text?.[0]);
         writeText(3, text?.[0])
-      }), throttleTime);
+      }, throttleTime));
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(34), limitToLast(1)),
       throttledFunction((snapshot) => {
@@ -218,7 +222,7 @@ const throttleTime = 1000;
         const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
         console.log('mqtt2oled 4', text?.[0]);
         writeText(4, text?.[0])
-      }), throttleTime);
+      }, throttleTime));
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(35), limitToLast(1)),
       throttledFunction((snapshot) => {
@@ -226,7 +230,7 @@ const throttleTime = 1000;
         const text = Object.values(data ?? {}).map(el => el?.string?.toString() ?? '');
         console.log('mqtt2oled 5', text?.[0]);
         writeText(5, text?.[0])
-      }), throttleTime);
+      }, throttleTime));
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(36), limitToLast(1)),
       throttledFunction((snapshot) => {
@@ -239,7 +243,7 @@ const throttleTime = 1000;
         } catch (err) {
           console.error(err)
         }
-      }), throttleTime);
+      }, throttleTime));
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(37), limitToLast(1)),
       throttledFunction((snapshot) => {
@@ -252,7 +256,7 @@ const throttleTime = 1000;
         } catch (err) {
           console.error(err)
         }
-      }), throttleTime);
+      }, throttleTime));
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(38), limitToLast(1)),
       throttledFunction((snapshot) => {
@@ -265,7 +269,7 @@ const throttleTime = 1000;
         } catch (err) {
           console.error(err)
         }
-      }), throttleTime);
+      }, throttleTime));
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(39), limitToLast(1)),
       throttledFunction((snapshot) => {
@@ -278,7 +282,7 @@ const throttleTime = 1000;
         } catch (err) {
           console.error(err)
         }
-      }), throttleTime);
+      }, throttleTime));
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(40), limitToLast(1)),
       throttledFunction((snapshot) => {
@@ -291,7 +295,7 @@ const throttleTime = 1000;
         } catch (err) {
           console.error(err)
         }
-      }), throttleTime);
+      }, throttleTime));
 
     onValue(query(ref(database, 'data'), orderByChild('groupId'), equalTo(41), limitToLast(1)),
       throttledFunction((snapshot) => {
@@ -304,7 +308,7 @@ const throttleTime = 1000;
         } catch (err) {
           console.error(err)
         }
-      }), throttleTime);
+      }, throttleTime));
 
     client.on('message', function (topic, message) {
       console.log(topic.toString(), message.toString());
